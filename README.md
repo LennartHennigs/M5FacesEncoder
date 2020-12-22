@@ -62,7 +62,7 @@ void loop();
 Installation
 ------------
 Open the Arduino IDE choose "Sketch > Include Library" and search for "Button2". 
-Or download the ZIP archive (https://github.com/lennarthennigs/Button2/zipball/master), and choose "Sketch > Include Library > Add .ZIP Library..." and select the downloaded file.
+Or download the ZIP archive (https://github.com/lennarthennigs/M5FacesEncoder/zipball/master), and choose "Sketch > Include Library > Add .ZIP Library..." and select the downloaded file.
 
 
 License
