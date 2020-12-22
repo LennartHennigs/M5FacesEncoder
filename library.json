@@ -1,7 +1,7 @@
 {
 	"name": "M5FacesEncoder",
 	"keywords": "Encoder, M5Stack",
-	"description": "Arduino Library for reading encoder values from the M5Stack Facees",
+	"description": "Arduino Library for reading encoder values from the M5Stack Facees Encoder Module",
 	"homepage": "https://github.com/LennartHennigs/M5FacesEncoder",
 	"repository": {
 		"type": "git",
