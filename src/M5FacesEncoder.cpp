@@ -6,11 +6,15 @@
 
 M5FacesEncoder::M5FacesEncoder(int lower_bound /* = INT16_MIN */, int upper_bound /* = INT16_MAX */, int inital_pos /* = 0 */, int steps_per_click /* = 1 */) {
   Wire.begin();
-  this->lower_bound = (lower_bound < upper_bound) ? lower_bound : upper_bound;
-  this->upper_bound = (lower_bound < upper_bound) ? upper_bound: lower_bound;
-  setStepsPerClick(steps_per_click);
-  loop();
-  setPosition(inital_pos, false);
+  Wire.beginTransmission(ENCODER_I2C_ADDR);
+  encoder_found = Wire.endTransmission();
+  if (encoder_found) {
+    this->lower_bound = (lower_bound < upper_bound) ? lower_bound : upper_bound;
+    this->upper_bound = (lower_bound < upper_bound) ? upper_bound: lower_bound;
+    setStepsPerClick(steps_per_click);
+    loop();
+    setPosition(inital_pos, false);
+  }
 }
 
 /////////////////////////////////////////////////////////////////
@@ -127,55 +131,57 @@ unsigned long M5FacesEncoder::wasPressedFor() const {
 /////////////////////////////////////////////////////////////////
 
 void M5FacesEncoder::loop() {
-  Wire.requestFrom(ENCODER_I2C_ADDR, 3);
-  if (Wire.available()) {    
-    // get rotary value
-    int increment = Wire.read(); 
-    position += ((increment > 127) ? (256 - increment) * -1 : increment) * steps_per_click;
-  }
+  if (encoder_found) {
+    Wire.requestFrom(ENCODER_I2C_ADDR, 3);
+    if (Wire.available()) {    
+      // get rotary value
+      int increment = Wire.read(); 
+      position += ((increment > 127) ? (256 - increment) * -1 : increment) * steps_per_click;
+    }
 
-  if (position >= lower_bound && position <= upper_bound) {
-    if (position != last_position) {
-      if (position > last_position) {
-        direction = ENCODER_RIGHT;
-        if (right_cb != NULL) right_cb (*this);
-      } else {
-        direction = ENCODER_LEFT;
-        if (left_cb != NULL) left_cb (*this);
+    if (position >= lower_bound && position <= upper_bound) {
+      if (position != last_position) {
+        if (position > last_position) {
+          direction = ENCODER_RIGHT;
+          if (right_cb != NULL) right_cb (*this);
+        } else {
+          direction = ENCODER_LEFT;
+          if (left_cb != NULL) left_cb (*this);
+        }
+        if (change_cb != NULL) change_cb (*this);
+        last_position = position;
       }
-      if (change_cb != NULL) change_cb (*this);
-      last_position = position;
-    }
-  } else {
-      if (position < lower_bound && lower_cb != NULL) lower_cb (*this);
-      if (position > upper_bound && upper_cb != NULL) upper_cb (*this);
-      position = last_position;
-    }
-    
-    // read button state
-    prev_state = state;
-    state = Wire.read();
-    unsigned long now = millis();
-    // is button pressed?  
-    if (state == PRESSED) {
-      if (prev_state == NOT_PRESSED) {
-        down_time_ms = 0;
-        down_ms = now;
+    } else {
+        if (position < lower_bound && lower_cb != NULL) lower_cb (*this);
+        if (position > upper_bound && upper_cb != NULL) upper_cb (*this);
+        position = last_position;
+      }
+      
+      // read button state
+      prev_state = state;
+      state = Wire.read();
+      unsigned long now = millis();
+      // is button pressed?  
+      if (state == PRESSED) {
+        if (prev_state == NOT_PRESSED) {
+          down_time_ms = 0;
+          down_ms = now;
+          pressed_triggered = false;
+        } else if(!pressed_triggered && (now > down_ms + debounce_time_ms)) {
+          pressed_triggered = true;
+          if (pressed_cb != NULL) pressed_cb (*this);
+        }
+      // is the button released?
+      } else if (state == NOT_PRESSED && prev_state == PRESSED && pressed_triggered) {
         pressed_triggered = false;
-      } else if(!pressed_triggered && (now > down_ms + debounce_time_ms)) {
-        pressed_triggered = true;
-        if (pressed_cb != NULL) pressed_cb (*this);
-      }
-    // is the button released?
-    } else if (state == NOT_PRESSED && prev_state == PRESSED && pressed_triggered) {
-      pressed_triggered = false;
-      down_time_ms = now - down_ms;
+        down_time_ms = now - down_ms;
 
-      // is it beyond debounce time?
-      if (down_time_ms >= debounce_time_ms) {
-        if (released_cb != NULL) released_cb (*this);
-        if (click_cb != NULL) click_cb (*this);
-    } 
+        // is it beyond debounce time?
+        if (down_time_ms >= debounce_time_ms) {
+          if (released_cb != NULL) released_cb (*this);
+          if (click_cb != NULL) click_cb (*this);
+      } 
+    }
   }
 }
 

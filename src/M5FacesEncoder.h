@@ -28,6 +28,7 @@
 
 class M5FacesEncoder {
  protected:
+    bool encoder_found = false;
     int position, last_position, lower_bound, upper_bound;
     byte direction;
     byte state;
