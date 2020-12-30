@@ -27,7 +27,7 @@ void setup() {
   M5.Lcd.setTextSize(2);
   M5.Lcd.setTextColor(WHITE);
   M5.Lcd.clear();
-  M5.Lcd.print("Rotary Encoder Test");
+  M5.Lcd.println("Rotary Encoder Test");
 
   showLedAnimation();
 
@@ -42,7 +42,6 @@ void setup() {
     encoder.setUpperOverflowHandler(theEnd);
     encoder.setLowerOverflowHandler(theEnd);
   } else {
-    M5.Lcd.println("");
     M5.Lcd.println("");
     M5.Lcd.println("no encoder found");
   }
