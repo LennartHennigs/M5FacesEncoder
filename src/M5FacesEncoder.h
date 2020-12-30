@@ -28,8 +28,8 @@
 
 class M5FacesEncoder {
  protected:
-    bool encoder_found = false;
     int position, last_position, lower_bound, upper_bound;
+    bool is_present;
     byte direction;
     byte state;
     byte prev_state;
@@ -52,8 +52,10 @@ class M5FacesEncoder {
     CallbackFunction click_cb = NULL;
 
   public:
-    M5FacesEncoder(int lower_bound = INT16_MIN , int upper_bound = INT16_MAX , int inital_pos = 0, int steps_per_click = 1);
+    M5FacesEncoder();
 
+    bool begin(int lower_bound = INT16_MIN , int upper_bound = INT16_MAX , int inital_pos = 0, int steps_per_click = 1);
+    bool isPresent();
     void setStepsPerClick(int steps);
     int getStepsPerClick() const;
     int getPosition() const;

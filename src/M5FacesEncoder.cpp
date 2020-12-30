@@ -3,18 +3,31 @@
 #include "M5FacesEncoder.h"
 
 /////////////////////////////////////////////////////////////////
+M5FacesEncoder::M5FacesEncoder() {
+  
+}
+/////////////////////////////////////////////////////////////////
 
-M5FacesEncoder::M5FacesEncoder(int lower_bound /* = INT16_MIN */, int upper_bound /* = INT16_MAX */, int inital_pos /* = 0 */, int steps_per_click /* = 1 */) {
-  Wire.begin();
-  Wire.beginTransmission(ENCODER_I2C_ADDR);
-  encoder_found = Wire.endTransmission();
-  if (encoder_found) {
+bool M5FacesEncoder::begin(int lower_bound /* = INT16_MIN */, int upper_bound /* = INT16_MAX */, int inital_pos /* = 0 */, int steps_per_click /* = 1 */) {
+  if(isPresent()) {
     this->lower_bound = (lower_bound < upper_bound) ? lower_bound : upper_bound;
     this->upper_bound = (lower_bound < upper_bound) ? upper_bound: lower_bound;
     setStepsPerClick(steps_per_click);
     loop();
     setPosition(inital_pos, false);
+    return true;
+  } else {
+    return false;
   }
+}
+
+/////////////////////////////////////////////////////////////////
+
+bool M5FacesEncoder::isPresent() {
+  Wire.begin();
+  Wire.beginTransmission(ENCODER_I2C_ADDR);
+  is_present = (Wire.endTransmission() == 0);
+  return is_present;
 }
 
 /////////////////////////////////////////////////////////////////
@@ -131,7 +144,7 @@ unsigned long M5FacesEncoder::wasPressedFor() const {
 /////////////////////////////////////////////////////////////////
 
 void M5FacesEncoder::loop() {
-  if (encoder_found) {
+  if (is_present) {
     Wire.requestFrom(ENCODER_I2C_ADDR, 3);
     if (Wire.available()) {   
        

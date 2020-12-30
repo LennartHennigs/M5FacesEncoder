@@ -5,7 +5,8 @@
 
 /////////////////////////////////////////////////////////////////
 
-M5FacesEncoder encoder = M5FacesEncoder(-20, 20, 10, 2);
+// sets range from -20 to 20, starting point to 10, and 2 steps per turn
+M5FacesEncoder encoder;
 
 /////////////////////////////////////////////////////////////////
 
@@ -14,25 +15,37 @@ void setup() {
   M5.Power.begin();
   M5.Speaker.mute();
 
+  Serial.begin(9600);
+  while(!Serial) {
+    delay(20);
+  }
+  Serial.println("");
+  Serial.println("");
+  Serial.println("Rotary Encoder Test");
+
   M5.Lcd.begin();
   M5.Lcd.setTextSize(2);
-  M5.Lcd.setTextColor(0xffffff);
-  
-  showAnimation();
-
-  encoder.setPressedHandler(pressed);
-  encoder.setClickHandler(click);
-  encoder.setReleasedHandler(released);
-
-  encoder.setChangedHandler(rotate);
-  encoder.setLeftRotationHandler(showDirection);
-  encoder.setRightRotationHandler(showDirection);
-  encoder.setUpperOverflowHandler(theEnd);
-  encoder.setLowerOverflowHandler(theEnd);
-
+  M5.Lcd.setTextColor(WHITE);
   M5.Lcd.clear();
   M5.Lcd.print("Rotary Encoder Test");
-  rotate(encoder);
+
+  showLedAnimation();
+
+  if (encoder.begin(-20, 20, 10, 2)) {
+    encoder.setPressedHandler(pressed);
+    encoder.setClickHandler(click);
+    encoder.setReleasedHandler(released);
+
+    encoder.setChangedHandler(rotate);
+    encoder.setLeftRotationHandler(showDirection);
+    encoder.setRightRotationHandler(showDirection);
+    encoder.setUpperOverflowHandler(theEnd);
+    encoder.setLowerOverflowHandler(theEnd);
+  } else {
+    M5.Lcd.println("");
+    M5.Lcd.println("");
+    M5.Lcd.println("no encoder found");
+  }
 }
 
 void loop() {
@@ -42,7 +55,7 @@ void loop() {
 
 /////////////////////////////////////////////////////////////////
 
-void showAnimation() {
+void showLedAnimation() {
 for (int i=0; i < 12; i++) {
     encoder.setLed(i, 0x00ff00);
     delay(20);
