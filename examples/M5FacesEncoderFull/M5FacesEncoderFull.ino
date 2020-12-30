@@ -5,7 +5,6 @@
 
 /////////////////////////////////////////////////////////////////
 
-// sets range from -20 to 20, starting point to 10, and 2 steps per turn
 M5FacesEncoder encoder;
 
 /////////////////////////////////////////////////////////////////
@@ -30,7 +29,8 @@ void setup() {
   M5.Lcd.println("Rotary Encoder Test");
 
   showLedAnimation();
-
+  
+  // sets range from -20 to 20, starting point to 10, and 2 steps per turn
   if (encoder.begin(-20, 20, 10, 2)) {
     encoder.setPressedHandler(pressed);
     encoder.setClickHandler(click);
@@ -41,6 +41,10 @@ void setup() {
     encoder.setRightRotationHandler(showDirection);
     encoder.setUpperOverflowHandler(theEnd);
     encoder.setLowerOverflowHandler(theEnd);
+
+    // show the current position
+    rotate(encoder;
+  // no encoder found
   } else {
     M5.Lcd.println("");
     M5.Lcd.println("no encoder found");
