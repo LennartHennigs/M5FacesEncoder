@@ -1,4 +1,6 @@
 M5FacesEncoder	KEYWORD1
+begin	KEYWORD1
+isPresent	KEYWORD1
 setStepsPerClick	KEYWORD2
 getStepsPerClick	KEYWORD2
 getPosition	KEYWORD2

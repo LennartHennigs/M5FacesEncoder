@@ -28,7 +28,11 @@ These are the constructor and the member functions the library provides:
 
 
 ```
-M5FacesEncoder (int lower_bound = INT16_MIN , int upper_bound = INT16_MAX , int inital_pos = 0, int steps_per_click = 1);
+M5FacesEncoder();
+
+bool begin(int lower_bound = INT16_MIN , int upper_bound = INT16_MAX , int inital_pos = 0, int steps_per_click = 1);
+
+bool isPresent();
 
 void setStepsPerClick (int steps);
 int getStepsPerClick() const;
