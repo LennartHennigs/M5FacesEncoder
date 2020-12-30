@@ -133,7 +133,8 @@ unsigned long M5FacesEncoder::wasPressedFor() const {
 void M5FacesEncoder::loop() {
   if (encoder_found) {
     Wire.requestFrom(ENCODER_I2C_ADDR, 3);
-    if (Wire.available()) {    
+    if (Wire.available()) {   
+       
       // get rotary value
       int increment = Wire.read(); 
       position += ((increment > 127) ? (256 - increment) * -1 : increment) * steps_per_click;
@@ -167,7 +168,7 @@ void M5FacesEncoder::loop() {
           down_time_ms = 0;
           down_ms = now;
           pressed_triggered = false;
-        } else if(!pressed_triggered && (now > down_ms + debounce_time_ms)) {
+        } else if (!pressed_triggered && (now > down_ms + debounce_time_ms)) {
           pressed_triggered = true;
           if (pressed_cb != NULL) pressed_cb (*this);
         }
