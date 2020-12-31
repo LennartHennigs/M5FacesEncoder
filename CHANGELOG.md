@@ -3,6 +3,9 @@
 ## Unreleased
 - check encoder is present (is I2C encoder address set?)
 
+## [1.1.1] - 2017-12-31
+- updated default contructor
+
 ## [1.1.0] - 2017-12-30
 - added ```begin()``` and ```isPresent()``` functions to check if a encoder is present
 
